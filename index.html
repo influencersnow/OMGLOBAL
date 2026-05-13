@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Integral de Servicios y Precios - OMGLOBAL</title>
+    <!-- Script para descargar en PDF directamente -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm 12mm;
+            background-color: #fafafa;
+        }
+
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #2c2c2c;
+            background-color: #fafafa;
+            box-sizing: border-box;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        #portfolio-wrapper {
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Adornos de fondo corporativos OMGLOBAL */
+        .bg-circle-1 { position: absolute; top: -60px; right: -60px; width: 250px; height: 250px; background-color: #FFD659; border-radius: 50%; opacity: 0.15; z-index: 0; }
+        .bg-circle-2 { position: absolute; bottom: -40px; left: -40px; width: 150px; height: 150px; background-color: #FFD659; border-radius: 50%; opacity: 0.2; z-index: 0; }
+        .bg-circle-3 { position: absolute; top: 40%; left: -100px; width: 200px; height: 200px; background-color: #FFD659; border-radius: 50%; opacity: 0.1; z-index: 0; }
+
+        .header { display: table; width: 100%; margin-bottom: 30px; position: relative; z-index: 1; border-bottom: 2px solid #f0f0f0; padding-bottom: 20px;}
+        .header-left { display: table-cell; vertical-align: middle; }
+        .header-right { display: table-cell; text-align: right; vertical-align: middle; }
+        
+        .brand-name { font-size: 28pt; font-weight: 900; color: #2c2c2c; margin: 0; letter-spacing: -1px; }
+        .brand-sub { font-size: 10pt; color: #7f8c8d; display: block; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px;}
+        .doc-title { background-color: #FFD659; color: #2c2c2c; padding: 10px 20px; display: inline-block; font-weight: bold; font-size: 12pt; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .intro-text { position: relative; z-index: 1; font-size: 11pt; color: #555; line-height: 1.6; margin-bottom: 30px; text-align: justify; }
+
+        .section { position: relative; z-index: 1; margin-bottom: 35px; page-break-inside: auto; }
+        .section-header { font-size: 15pt; font-weight: bold; color: #2c2c2c; border-left: 6px solid #FFD659; padding-left: 12px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; page-break-after: avoid; }
+        
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .grid-full { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 20px; }
+        
+        .service-card { background-color: #fff; border: 1px solid #eee; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: transform 0.2s; display: flex; flex-direction: column; page-break-inside: avoid; }
+        .service-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.05); border-color: #FFD659; }
+        .service-icon { font-size: 18pt; margin-bottom: 10px; display: inline-block; background: #FFD659; width: 40px; height: 40px; text-align: center; line-height: 40px; border-radius: 8px; }
+        .service-title { font-weight: bold; font-size: 12pt; color: #2c2c2c; margin-bottom: 8px; }
+        .service-list { margin: 0; padding-left: 20px; font-size: 10pt; color: #555; line-height: 1.5; flex-grow: 1;}
+        .service-list li { margin-bottom: 5px; }
+        
+        /* Estilos de precios agregados */
+        .price-tag { margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ddd; font-size: 11pt; color: #2c2c2c; font-weight: bold; text-align: right; }
+        .price-note { display: block; font-size: 8.5pt; color: #7f8c8d; font-weight: normal; margin-top: 3px; text-align: right;}
+
+        /* Estilo especial para Asesorías */
+        .asesoria-card { background-color: #2c2c2c; color: white; border: none; }
+        .asesoria-card .service-title { color: #FFD659; }
+        .asesoria-card .service-list { color: #ddd; }
+        .asesoria-card .price-tag { border-top-color: #444; color: white; text-align: left;}
+        .asesoria-card .price-note { color: #aaa; text-align: left;}
+
+        .footer { margin-top: 50px; text-align: center; font-size: 9pt; color: #7f8c8d; position: relative; z-index: 1; border-top: 1px solid #eee; padding-top: 20px; }
+        
+        .btn-container { text-align: center; margin-bottom: 25px; }
+        .btn-dl { background-color: #FFD659; color: #2c2c2c; border: none; padding: 14px 28px; font-weight: bold; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; font-size: 11pt; box-shadow: 0 4px 10px rgba(255, 214, 89, 0.4); transition: transform 0.2s; }
+        .btn-dl:hover { transform: scale(1.05); }
+
+        /* ==========================================================================
+           DISEÑO RESPONSIVE (MÓVILES Y TABLETS)
+           Aplicado solo en pantallas, no afecta el PDF generado.
+           ========================================================================== */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            #portfolio-wrapper {
+                padding: 20px;
+                border-radius: 8px;
+            }
+            
+            /* Convertir las grillas de 2 columnas en 1 columna */
+            .grid-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            /* Ajustar el encabezado para que se apile verticalmente */
+            .header {
+                display: block;
+                text-align: center;
+                padding-bottom: 15px;
+            }
+            .header-left {
+                display: block;
+                margin-bottom: 15px;
+            }
+            .header-right {
+                display: block;
+                text-align: center;
+            }
+            
+            /* Ajustar tipografías para pantallas pequeñas */
+            .brand-name { font-size: 24pt; }
+            .doc-title { font-size: 11pt; display: block; margin: 0 auto 10px auto; width: fit-content; }
+            .section-header { font-size: 13pt; margin-bottom: 15px; }
+            
+            /* Ajustes en las tarjetas */
+            .service-card {
+                padding: 15px;
+            }
+            .service-icon {
+                font-size: 16pt;
+                width: 35px;
+                height: 35px;
+                line-height: 35px;
+            }
+            
+            /* Alinear los precios a la izquierda en móviles para mejor lectura */
+            .price-tag {
+                text-align: left;
+                margin-top: 10px;
+            }
+            .price-note {
+                text-align: left;
+            }
+            
+            /* Reducir los adornos de fondo para que no estorben en móvil */
+            .bg-circle-1 { width: 150px; height: 150px; top: -30px; right: -30px; }
+            .bg-circle-2 { width: 100px; height: 100px; bottom: -20px; left: -20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="btn-container" id="boton-descarga">
+        <button class="btn-dl" onclick="descargarPDF()">DESCARGAR TARIFARIO (PDF)</button>
+    </div>
+
+    <div id="portfolio-wrapper">
+        <div class="bg-circle-1"></div>
+        <div class="bg-circle-2"></div>
+        <div class="bg-circle-3"></div>
+        
+        <div class="header">
+            <div class="header-left">
+                <h1 class="brand-name">OMGLOBAL</h1>
+                <span class="brand-sub">Marketing, Design & Strategy</span>
+            </div>
+            <div class="header-right">
+                <div class="doc-title">Tarifario y Servicios</div>
+                <div style="font-size: 9.5pt; color: #7f8c8d; margin-top: 8px;"><strong>Director Estratégico:</strong><br>Lic. Adrián Valentín Amado</div>
+            </div>
+        </div>
+
+        <div class="intro-text">
+            Transformamos negocios tradicionales en máquinas de ventas digitales. Conoce nuestro catálogo de servicios especializados, diseñados para abarcar desde la configuración técnica hasta el escalamiento publicitario.
+        </div>
+
+        <!-- SECCIÓN 1: ASESORÍAS (Destacada) -->
+        <div class="section">
+            <div class="section-header">Consultoría y Soporte Técnico</div>
+            <div class="grid-full">
+                <div class="service-card asesoria-card">
+                    <div class="service-icon">⏱️</div>
+                    <div class="service-title">Asesoría Técnica y Capacitación 1 a 1</div>
+                    <ul class="service-list">
+                        <li>Resolución de problemas técnicos (Bloqueos, configuración de Business Manager).</li>
+                        <li>Auditoría de cuentas y setup de software de streaming (OBS/Lives).</li>
+                        <li>Capacitación de personal en herramientas digitales y redes sociales.</li>
+                    </ul>
+                    <div class="price-tag">
+                        Tarifa Base: S/ 50.00
+                        <span class="price-note">*Duración mínima: 40 minutos. El precio es variable y se ajustará dependiendo del tiempo que se extienda la sesión.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: MARKETING & PUBLICIDAD -->
+        <div class="section">
+            <div class="section-header">Publicidad y Estrategia</div>
+            <div class="grid-container">
+                <div class="service-card">
+                    <div class="service-icon">📈</div>
+                    <div class="service-title">Trafficker Digital (Media Buying)</div>
+                    <ul class="service-list">
+                        <li>Creación y gestión de campañas en Meta Ads y TikTok Ads.</li>
+                        <li>Segmentación avanzada, pruebas A/B y escalamiento.</li>
+                        <li>Optimización de presupuesto para conseguir leads y mensajes.</li>
+                    </ul>
+                    <div class="price-tag">S/ 800.00<span class="price-note">*Honorarios mensuales (No incluye inversión publicitaria).</span></div>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🤖</div>
+                    <div class="service-title">Creación de Contenido con IA</div>
+                    <ul class="service-list">
+                        <li>Generación de imágenes, copies persuasivos y guiones con Inteligencia Artificial.</li>
+                        <li>Automatización de respuestas y flujos de chat.</li>
+                        <li>Optimización de perfiles con estrategias basadas en IA.</li>
+                    </ul>
+                    <div class="price-tag">Desde S/ 200.00<span class="price-note">*Por paquete de contenido/implementación.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: AUDIOVISUAL & DISEÑO -->
+        <div class="section">
+            <div class="section-header">Audiovisual y Fotografía</div>
+            <div class="grid-container">
+                <div class="service-card">
+                    <div class="service-icon">🎬</div>
+                    <div class="service-title">Producción Audiovisual</div>
+                    <ul class="service-list">
+                        <li>Visita presencial y grabación de videos formato vertical (Reels/TikTok).</li>
+                        <li>Edición dinámica (subtítulos, transiciones, ganchos visuales).</li>
+                    </ul>
+                    <div class="price-tag">S/ 600.00<span class="price-note">*Paquete de 4 a 6 videos mensuales.</span></div>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📸</div>
+                    <div class="service-title">Fotografía Profesional</div>
+                    <ul class="service-list">
+                        <li>Sesiones de fotografía de producto (E-commerce / Catálogos).</li>
+                        <li>Fotografía corporativa e instalaciones.</li>
+                        <li>Retoque digital y corrección de color.</li>
+                    </ul>
+                    <div class="price-tag">S/ 300.00<span class="price-note">*Por sesión (Dependiendo del volumen de productos/horas).</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 4: DESARROLLO WEB -->
+        <div class="section">
+            <div class="section-header">Desarrollo y Diseño Web</div>
+            <div class="grid-container">
+                <div class="service-card">
+                    <div class="service-icon">💻</div>
+                    <div class="service-title">Diseñador Web (Landing & E-commerce)</div>
+                    <ul class="service-list">
+                        <li>Diseño de Landing Pages de alta conversión para captación de leads.</li>
+                        <li>Desarrollo de Tiendas Virtuales (E-commerce) completas.</li>
+                        <li>Integración de píxeles, pasarelas de pago y botones de WhatsApp.</li>
+                    </ul>
+                    <div class="price-tag">S/ 2,500.00<span class="price-note">*Dependiendo de la complejidad y tipo de web.</span></div>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🎨</div>
+                    <div class="service-title">Identidad Visual (Branding)</div>
+                    <ul class="service-list">
+                        <li>Diseño de Logotipos y manual de marca.</li>
+                        <li>Línea gráfica para redes sociales.</li>
+                        <li>Diseño de catálogos y presentaciones corporativas.</li>
+                    </ul>
+                    <div class="price-tag">Desde S/ 250.00<span class="price-note">*Por proyecto de identidad visual.</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SECCIÓN 5: EVENTOS & PROTOCOLO -->
+        <div class="section">
+            <div class="section-header">Relaciones Públicas y Eventos</div>
+            <div class="grid-container" style="grid-template-columns: 1fr;">
+                <div class="service-card">
+                    <div class="service-icon">🎟️</div>
+                    <div class="service-title">Organización de Eventos y Protocolo</div>
+                    <ul class="service-list">
+                        <li>Planificación, logística y ejecución de eventos corporativos, lanzamientos y activaciones de marca.</li>
+                        <li>Gestión de protocolo, relaciones públicas y atención a invitados especiales o VIP.</li>
+                        <li>Coordinación integral de proveedores y supervisión in situ durante todo el evento.</li>
+                    </ul>
+                    <div class="price-tag">Desde S/ 1,000.00<span class="price-note">*Dependiendo de la magnitud, duración y requerimientos específicos del evento.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>OMGLOBAL</strong> - La tecnología y estrategia al servicio de tu crecimiento comercial.</p>
+            <p>Los precios mostrados son referenciales y pueden ajustarse tras una evaluación personalizada de tu proyecto.</p>
+        </div>
+    </div>
+
+    <script>
+        function descargarPDF() {
+            const elemento = document.getElementById('portfolio-wrapper');
+            
+            // Ocultar el botón temporalmente para que no salga en el PDF
+            document.getElementById('boton-descarga').style.display = 'none';
+            
+            // Restablecer estilos en caso de que esté en vista móvil al momento de descargar
+            const originalBoxShadow = elemento.style.boxShadow;
+            const originalMargin = elemento.style.margin;
+            elemento.style.boxShadow = 'none';
+            elemento.style.margin = '0';
+            
+            const opciones = {
+                margin:       0.2,
+                filename:     'Tarifario_Completo_OMGLOBAL.pdf',
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 2, useCORS: true, windowWidth: 850 }, // Forzar ancho de escritorio para el PDF
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opciones).from(elemento).save().then(() => {
+                // Restaurar vista
+                elemento.style.boxShadow = originalBoxShadow;
+                elemento.style.margin = originalMargin;
+                document.getElementById('boton-descarga').style.display = 'block';
+            });
+        }
+    </script>
+</body>
+</html>
